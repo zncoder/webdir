@@ -49,23 +49,20 @@ type ReadonlyDir struct {
 }
 
 func (d ReadonlyDir) Mkdir(ctx context.Context, name string, perm os.FileMode) error {
-	return fs.ErrPermission
+	return webdav.ErrNotImplemented
 }
 
 func (d ReadonlyDir) RemoveAll(ctx context.Context, name string) error {
-	return fs.ErrPermission
+	return webdav.ErrNotImplemented
 }
 
 func (d ReadonlyDir) Rename(ctx context.Context, oldName, newName string) error {
-	return fs.ErrPermission
+	return webdav.ErrNotImplemented
 }
 
 func (d ReadonlyDir) OpenFile(ctx context.Context, name string, flag int, perm os.FileMode) (webdav.File, error) {
-	// TODO: make ReadonlyDir appears as a read-only file system
-	// if flag&(os.O_RDONLY|os.O_RDWR) != 0 {
-	// 	flag = os.O_RDONLY
-	// } else {
-	// 	return nil, fs.ErrPermission
-	// }
+	if flag&(os.O_WRONLY|os.O_RDWR|os.O_APPEND|os.O_CREATE|os.O_TRUNC) != 0 {
+		return nil, webdav.ErrNotImplemented
+	}
 	return d.Dir.OpenFile(ctx, name, flag, perm)
 }
